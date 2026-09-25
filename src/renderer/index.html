@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'none'" />
+    <title>iPhone Desk</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true"><span></span></div>
+          <div>
+            <h1>iPhone Desk</h1>
+            <p>Điều khiển iPhone cá nhân từ Windows</p>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-button" id="pinButton" type="button" title="Luôn nổi trên cùng" aria-label="Luôn nổi trên cùng">◇</button>
+          <button class="icon-button" id="fullscreenButton" type="button" title="Toàn màn hình" aria-label="Toàn màn hình">⛶</button>
+          <div class="connection-pill is-offline" id="connectionPill">
+            <span class="status-dot"></span>
+            <span id="connectionLabel">Chưa kết nối</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="viewer-panel" aria-label="Màn hình iPhone">
+          <div class="ambient ambient-one"></div>
+          <div class="ambient ambient-two"></div>
+          <div class="device-wrap">
+            <div class="device" id="deviceFrame">
+              <div class="device-speaker" aria-hidden="true"></div>
+              <div class="screen" id="screenSurface" tabindex="0" aria-label="Màn hình iPhone có thể điều khiển">
+                <img id="deviceImage" alt="Màn hình iPhone" draggable="false" />
+                <div class="demo-screen" id="demoScreen" aria-hidden="true">
+                  <div class="demo-status"><span>9:41</span><span>● ᯤ ▰</span></div>
+                  <div class="demo-title">Xin chào</div>
+                  <div class="demo-date">Thứ Sáu, 25 tháng 9</div>
+                  <div class="demo-widget">
+                    <span class="weather-icon">☀</span>
+                    <div><strong>29°</strong><small>TP. Hồ Chí Minh</small></div>
+                  </div>
+                  <div class="demo-icons">
+                    <span class="app-icon blue">✉</span><span class="app-icon violet">◉</span>
+                    <span class="app-icon green">☎</span><span class="app-icon orange">♫</span>
+                    <span class="app-icon cyan">◎</span><span class="app-icon red">▶</span>
+                    <span class="app-icon dark">⚙</span><span class="app-icon pink">♥</span>
+                  </div>
+                  <div class="demo-dock"><span>☎</span><span>◉</span><span>♫</span><span>◎</span></div>
+                </div>
+                <div class="screen-message" id="screenMessage">
+                  <strong>Sẵn sàng kết nối</strong>
+                  <span>Cắm iPhone và khởi chạy WebDriverAgent</span>
+                </div>
+                <div class="gesture-indicator" id="gestureIndicator"></div>
+              </div>
+              <div class="home-indicator" aria-hidden="true"></div>
+            </div>
+          </div>
+
+          <div class="control-dock">
+            <button class="dock-button" id="homeButton" type="button" disabled><span>⌂</span><small>Home</small></button>
+            <button class="dock-button" id="refreshButton" type="button" disabled><span>↻</span><small>Làm mới</small></button>
+            <button class="dock-button" id="keyboardButton" type="button" disabled><span>⌨</span><small>Bàn phím</small></button>
+            <button class="dock-button danger" id="lockButton" type="button" disabled><span>▣</span><small>Khóa</small></button>
+          </div>
+        </section>
+
+        <aside class="side-panel">
+          <section class="panel-card connection-card">
+            <div class="section-heading">
+              <div><span class="eyebrow">KẾT NỐI</span><h2>WebDriverAgent</h2></div>
+              <span class="version-badge">USB ưu tiên</span>
+            </div>
+            <div class="mode-switch" role="radiogroup" aria-label="Kiểu kết nối">
+              <button class="mode-option is-active" id="directMode" type="button" role="radio" aria-checked="true">WDA trực tiếp</button>
+              <button class="mode-option" id="appiumMode" type="button" role="radio" aria-checked="false">Appium Windows</button>
+            </div>
+            <label class="field-label" for="serverUrl">Địa chỉ máy chủ</label>
+            <div class="url-field">
+              <span>⌁</span>
+              <input id="serverUrl" value="http://127.0.0.1:8100" spellcheck="false" autocomplete="off" />
+            </div>
+            <div class="appium-fields is-hidden" id="appiumFields">
+              <div class="field-grid">
+                <label><span>UDID thiết bị</span><input id="deviceUdid" placeholder="000081…" spellcheck="false" /></label>
+                <label><span>Phiên bản iOS</span><input id="platformVersion" placeholder="18.0" spellcheck="false" /></label>
+              </div>
+              <label class="stacked-field"><span>Bundle ID WebDriverAgent</span><input id="wdaBundleId" value="com.appium.WebDriverAgentRunner" spellcheck="false" /></label>
+            </div>
+            <button class="primary-button" id="connectButton" type="button">
+              <span class="button-icon">↗</span><span id="connectButtonLabel">Kết nối iPhone</span>
+            </button>
+            <p class="helper-text" id="connectionHint">Ứng dụng chỉ kết nối trong mạng cục bộ. Không gửi dữ liệu lên Internet.</p>
+          </section>
+
+          <section class="panel-card keyboard-card is-hidden" id="keyboardCard">
+            <div class="section-heading compact"><h2>Nhập bàn phím</h2><button class="text-button" id="closeKeyboard" type="button">Đóng</button></div>
+            <textarea id="keyboardInput" rows="3" placeholder="Nhập nội dung muốn gửi tới ô đang chọn trên iPhone…"></textarea>
+            <button class="secondary-button" id="sendKeysButton" type="button">Gửi nội dung</button>
+          </section>
+
+          <section class="panel-card checklist-card">
+            <div class="section-heading compact"><h2>Điều kiện sử dụng</h2></div>
+            <ol class="checklist">
+              <li><span>1</span><div><strong>iOS 18 trở lên</strong><small>Developer Mode và UI Automation đang bật</small></div></li>
+              <li><span>2</span><div><strong>Apple Mobile Device Driver</strong><small>iPhone được Windows nhận diện và tin cậy</small></div></li>
+              <li><span>3</span><div><strong>WebDriverAgent đang chạy</strong><small>Cổng 8100 được chuyển tiếp về máy tính</small></div></li>
+            </ol>
+            <button class="link-button" id="guideButton" type="button">Mở hướng dẫn Appium ↗</button>
+          </section>
+
+          <section class="stats-row">
+            <div><span>Độ phân giải</span><strong id="resolutionValue">—</strong></div>
+            <div><span>Tốc độ ảnh</span><strong id="fpsValue">Demo</strong></div>
+          </section>
+        </aside>
+      </main>
+
+      <footer class="statusbar">
+        <span class="mini-dot" id="footerDot"></span>
+        <span id="footerStatus">Ứng dụng đang ở chế độ xem trước</span>
+        <span class="status-spacer"></span>
+        <span>Click • Kéo • Cuộn • Bàn phím</span>
+      </footer>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="renderer.js"></script>
+  </body>
+</html>
