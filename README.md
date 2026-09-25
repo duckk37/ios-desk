@@ -1,10 +1,10 @@
 # iPhone Desk
 
-Ứng dụng Windows cá nhân để xem và điều khiển iPhone thông qua WebDriverAgent/XCUITest. Giao diện hỗ trợ click, kéo, cuộn, nhập bàn phím, Home, khóa màn hình, toàn màn hình và luôn nổi trên cùng.
+Ứng dụng Windows cá nhân để xem và điều khiển iPhone thông qua WebDriverAgent/XCUITest. Giao diện hỗ trợ click, kéo, cuộn, nhập bàn phím, Home, khóa màn hình, toàn màn hình và luôn nổi trên cùng. Hình ảnh ưu tiên luồng MJPEG độ trễ thấp ở cổng 9100 và tự chuyển về ảnh chụp WDA nếu stream không sẵn sàng.
 
 ## Chạy ứng dụng
 
-Bản portable sau khi build nằm trong `release-final/iPhone-Desk-0.1.0-Portable.exe`. Không cần cài đặt; chỉ cần mở file này.
+Bản portable độ trễ thấp nằm trong `release-low-latency/iPhone-Desk-0.2.0-Portable.exe`. Không cần cài đặt; chỉ cần mở file này.
 
 Để chạy từ mã nguồn:
 
@@ -23,7 +23,7 @@ npm test
 
 ### WDA trực tiếp
 
-Dùng khi WebDriverAgent đã chạy và được chuyển tiếp về `http://127.0.0.1:8100`. Đây là chế độ nhẹ và nhanh nhất.
+Dùng khi WebDriverAgent đã chạy và được chuyển tiếp về `http://127.0.0.1:8100`. Để có hình ảnh mượt hơn, chuyển tiếp thêm MJPEG về `http://127.0.0.1:9100`. Đây là chế độ nhẹ và nhanh nhất.
 
 ### Appium Windows
 
@@ -68,7 +68,7 @@ Có thể chạy `scripts/diagnose.ps1` để kiểm tra driver, thiết bị v�
 - Phiên mới có thể yêu cầu nhập mật mã/Touch ID trên iPhone.
 - iPhone hiển thị chỉ báo `Automation Running` khi XCTest hoạt động.
 - Face ID, Apple Pay, nội dung DRM và một số ứng dụng bảo mật không thể điều khiển hoặc chụp ảnh đầy đủ.
-- Luồng screenshot của WDA ưu tiên khả năng điều khiển, không đạt độ mượt 30–60 FPS như AirPlay.
+- MJPEG được cấu hình mục tiêu 20 FPS để cân bằng độ trễ và tải CPU. Nó phản hồi nhanh hơn chế độ screenshot nhưng không mượt như AirPlay 30–60 FPS.
 - Cần ký/cài lại WDA khi provisioning profile hết hạn hoặc không còn được iOS tin cậy.
 - Ứng dụng chỉ kết nối tới URL do người dùng nhập và không có máy chủ đám mây hay telemetry.
 
@@ -77,6 +77,7 @@ Có thể chạy `scripts/diagnose.ps1` để kiểm tra driver, thiết bị v�
 - [Appium trên Windows/Linux](https://appium.github.io/appium-xcuitest-driver/latest/guides/non-macos-hosts/)
 - [Chạy WDA được cài sẵn](https://appium.github.io/appium-xcuitest-driver/latest/guides/run-preinstalled-wda/)
 - [RemoteXPC tunnel](https://appium.github.io/appium-xcuitest-driver/latest/guides/remotexpc-tunnels-real-devices/)
+- [Luồng MJPEG của XCUITest Driver](https://github.com/appium/appium-xcuitest-driver/blob/master/docs/guides/mjpeg.md)
 - [Chuẩn bị thiết bị thật](https://appium.github.io/appium-xcuitest-driver/latest/getting-started/device-setup/)
 
 ## Bảo mật

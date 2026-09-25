@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'none'" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: http://127.0.0.1:9100 http://localhost:9100; style-src 'self'; script-src 'self'; connect-src 'none'" />
     <title>iPhone Desk</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -109,7 +109,7 @@
             <ol class="checklist">
               <li><span>1</span><div><strong>iOS 18 trở lên</strong><small>Developer Mode và UI Automation đang bật</small></div></li>
               <li><span>2</span><div><strong>Apple Mobile Device Driver</strong><small>iPhone được Windows nhận diện và tin cậy</small></div></li>
-              <li><span>3</span><div><strong>WebDriverAgent đang chạy</strong><small>Cổng 8100 được chuyển tiếp về máy tính</small></div></li>
+              <li><span>3</span><div><strong>WebDriverAgent đang chạy</strong><small>Cổng 8100 và MJPEG 9100 được chuyển tiếp</small></div></li>
             </ol>
             <button class="link-button" id="guideButton" type="button">Mở hướng dẫn Appium ↗</button>
           </section>

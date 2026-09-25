@@ -43,6 +43,19 @@ test("client sends tap and drag to WDA endpoints", async () => {
   assert.match(calls[1].url, /wda\/dragfromtoforduration$/);
 });
 
+test("client updates MJPEG settings for the active session", async () => {
+  const calls = [];
+  const client = new WdaClient("http://localhost:8100", {
+    fetchImpl: async (url, options = {}) => { calls.push({ url, options }); return response({ value: null }); },
+  });
+  client.sessionId = "abc";
+  const settings = { mjpegServerFramerate: 20, mjpegScalingFactor: 60 };
+  await client.updateSettings(settings);
+  assert.match(calls[0].url, /session\/abc\/appium\/settings$/);
+  assert.equal(calls[0].options.method, "POST");
+  assert.deepEqual(JSON.parse(calls[0].options.body), { settings });
+});
+
 test("HTTP errors include WDA message", async () => {
   const client = new WdaClient("http://localhost:8100", {
     fetchImpl: async () => response({ value: { message: "not ready" } }, 500),

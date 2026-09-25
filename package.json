@@ -1,6 +1,6 @@
 {
   "name": "iphone-desk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Personal iPhone mirroring and control client for Windows using WebDriverAgent.",
   "main": "src/main.js",
   "type": "module",

@@ -19,6 +19,8 @@ let connected = false;
 let busy = false;
 let polling = false;
 let refreshRequested = false;
+let streaming = false;
+let mjpegUrl = null;
 let deviceSize = { width: 390, height: 844 };
 let pointerStart = null;
 let frameTimes = [];
@@ -58,6 +60,8 @@ function setConnected(value) {
     : "Ứng dụng chỉ kết nối trong mạng cục bộ. Không gửi dữ liệu lên Internet.";
   [ui.homeButton, ui.refreshButton, ui.keyboardButton, ui.lockButton].forEach((button) => { button.disabled = !value; });
   if (!value) {
+    streaming = false;
+    mjpegUrl = null;
     ui.deviceImage.removeAttribute("src");
     ui.resolutionValue.textContent = "—";
     ui.fpsValue.textContent = "Demo";
@@ -68,8 +72,34 @@ function setConnected(value) {
 
 async function disconnect() {
   polling = false;
+  streaming = false;
   await window.iphoneDesk.disconnect();
   setConnected(false);
+}
+
+function streamUrlWithCacheBuster(url) {
+  const separator = url.includes("?") ? "&" : "?";
+  return `${url}${separator}v=${Date.now()}`;
+}
+
+function startMjpegStream(url, targetFps = null) {
+  polling = false;
+  streaming = true;
+  mjpegUrl = url;
+  frameTimes = [];
+  ui.fpsValue.textContent = targetFps ? `MJPEG ${targetFps} FPS` : "MJPEG";
+  ui.deviceImage.src = streamUrlWithCacheBuster(url);
+}
+
+function startScreenshotFallback(message) {
+  if (!connected || polling) return;
+  streaming = false;
+  mjpegUrl = null;
+  polling = true;
+  frameTimes = [];
+  ui.fpsValue.textContent = "Ảnh dự phòng";
+  if (message) showToast(message, true);
+  pollScreenshot();
 }
 
 async function connect() {
@@ -101,9 +131,13 @@ async function connect() {
   ui.deviceFrame.style.aspectRatio = `${deviceSize.width} / ${deviceSize.height}`;
   ui.resolutionValue.textContent = `${deviceSize.width} × ${deviceSize.height}`;
   setConnected(true);
-  showToast("Đã kết nối iPhone");
-  polling = true;
-  pollScreenshot();
+  if (response.value.mjpegUrl) {
+    startMjpegStream(response.value.mjpegUrl, response.value.mjpegConfigured ? 20 : null);
+    showToast("Đã kết nối — đang dùng MJPEG độ trễ thấp");
+  } else {
+    startScreenshotFallback();
+    showToast("Đã kết nối iPhone");
+  }
 }
 
 async function pollScreenshot() {
@@ -153,7 +187,14 @@ function selectMode(mode) {
 }
 ui.directMode.addEventListener("click", () => selectMode("direct"));
 ui.appiumMode.addEventListener("click", () => selectMode("appium"));
-ui.refreshButton.addEventListener("click", () => { refreshRequested = true; showToast("Đang làm mới màn hình"); });
+ui.deviceImage.addEventListener("error", () => {
+  if (connected && streaming) startScreenshotFallback("Không nhận được MJPEG cổng 9100 — đã chuyển sang chế độ ảnh dự phòng");
+});
+ui.refreshButton.addEventListener("click", () => {
+  if (streaming && mjpegUrl) ui.deviceImage.src = streamUrlWithCacheBuster(mjpegUrl);
+  else refreshRequested = true;
+  showToast("Đang làm mới màn hình");
+});
 ui.homeButton.addEventListener("click", async () => {
   const response = await window.iphoneDesk.home();
   if (!response.ok) showToast(response.error, true);

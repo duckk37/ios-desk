@@ -138,6 +138,14 @@ export class WdaClient {
     return { width: value.width, height: value.height };
   }
 
+  async updateSettings(settings) {
+    const session = this.requireSession();
+    return this.request(`/session/${encodeURIComponent(session)}/appium/settings`, {
+      method: "POST",
+      body: { settings },
+    });
+  }
+
   async screenshot() {
     const session = this.requireSession();
     const payload = await this.request(`/session/${encodeURIComponent(session)}/screenshot`, {

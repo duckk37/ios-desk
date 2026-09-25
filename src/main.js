@@ -3,6 +3,7 @@ import { writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { WdaClient } from "./wda-client.js";
+import { deriveMjpegUrl } from "./mjpeg.js";
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const smokePath = process.env.IPHONE_DESK_SMOKE_PATH;
@@ -76,7 +77,25 @@ ipcMain.handle("wda:connect", (_event, config) => invokeSafely(async () => {
   }
   await client.createSession(capabilities);
   deviceSize = await client.windowSize();
-  return { status, deviceSize, url: client.baseUrl };
+  let mjpegConfigured = false;
+  try {
+    await client.updateSettings({
+      mjpegServerFramerate: 20,
+      mjpegScalingFactor: 60,
+      mjpegServerScreenshotQuality: 45,
+    });
+    mjpegConfigured = true;
+  } catch {
+    // Older WDA builds may not expose runtime MJPEG settings. The stream or
+    // screenshot fallback can still work with the server defaults.
+  }
+  return {
+    status,
+    deviceSize,
+    url: client.baseUrl,
+    mjpegUrl: deriveMjpegUrl(client.baseUrl),
+    mjpegConfigured,
+  };
 }));
 
 ipcMain.handle("wda:disconnect", () => invokeSafely(async () => {
